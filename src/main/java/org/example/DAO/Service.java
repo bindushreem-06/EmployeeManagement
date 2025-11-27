@@ -20,6 +20,7 @@ public class Service {
     }
 
     public void start() {
+
         while (true) {
             System.out.println("\n=========== MENU ===========");
             System.out.println("1. Add Employee");
@@ -31,26 +32,35 @@ public class Service {
             System.out.println("7. Update Employee");
             System.out.println("8. Delete Employee");
             System.out.println("9. Exit");
-            System.out.println("Enter your Choice: ");
+            System.out.print("Enter your Choice: ");
 
             int choice = scanner.nextInt();
-            switch (choice) {
-                case 1 -> addEmployee();
-                case 2 -> viewEmployeeByID();
-                case 3 -> viewEmployeeByName();
-                case 4 -> viewEmployeeByEmail();
-                case 5 -> viewEmployeeByPhone();
-                case 6 -> viewAllEmployees();
-                case 7 -> updateEmployee();
-                case 8 -> deleteEmployee();
-                case 9 -> {
-                    return;
-                }
-                default -> System.out.println("Invalid Choice!");
-            }
 
+            try {
+                switch (choice) {
+                    case 1 -> addEmployee();
+                    case 2 -> viewEmployeeByID();
+                    case 3 -> viewEmployeeByName();
+                    case 4 -> viewEmployeeByEmail();
+                    case 5 -> viewEmployeeByPhone();
+                    case 6 -> viewAllEmployees();
+                    case 7 -> updateEmployee();
+                    case 8 -> deleteEmployee();
+                    case 9 -> {
+                        entityManagerFactory.close();
+                        System.out.println("Application Closed Successfully!");
+                        return;
+                    }
+                    default -> System.out.println("Invalid Choice!");
+                }
+            } catch (EmployeeNotFoundException e) {
+                System.out.println("ERROR: " + e.getMessage());
+            } catch (Exception e) {
+                System.out.println("Unexpected Error: " + e.getMessage());
+            }
         }
     }
+
 
     private void addEmployee() {
         System.out.print("Enter Employee Name: ");
