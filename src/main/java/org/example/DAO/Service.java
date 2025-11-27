@@ -20,7 +20,6 @@ public class Service {
     }
 
     public void start() {
-
         while (true) {
             System.out.println("\n=========== MENU ===========");
             System.out.println("1. Add Employee");
@@ -34,7 +33,15 @@ public class Service {
             System.out.println("9. Exit");
             System.out.print("Enter your Choice: ");
 
-            int choice = scanner.nextInt();
+            String input = scanner.next();  // Read as string
+
+            // Validate input is numeric (1–9)
+            if (!input.matches("[1-9]")) {
+                System.out.println("Invalid Input! Please enter a number from 1 to 9.");
+                continue;
+            }
+
+            int choice = Integer.parseInt(input); // Safe conversion now!
 
             try {
                 switch (choice) {
@@ -60,7 +67,6 @@ public class Service {
             }
         }
     }
-
 
     private void addEmployee() {
         System.out.print("Enter Employee Name: ");
