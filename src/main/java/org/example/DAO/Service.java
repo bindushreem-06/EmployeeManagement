@@ -1,5 +1,5 @@
-package org.example.DAO;
 
+package org.example.DAO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityTransaction;
@@ -130,77 +130,106 @@ public class Service {
         String name = scanner.next();
 
         EntityManager em = entityManagerFactory.createEntityManager();
-
-        List<Employee> list = em.createQuery(
+        List<Employee> list1 = em.createQuery(
                         "SELECT e FROM Employee e WHERE e.employee_name = :name", Employee.class)
                 .setParameter("name", name)
+                .setHint("org.hibernate.cacheable", true)
                 .getResultList();
-
         em.close();
 
-        if (list.isEmpty()) {
-            throw new EmployeeNotFoundException("No Employees Found with name: " + name);
+        if (list1.isEmpty()) {
+            throw new EmployeeNotFoundException("No Employee found with Name: " + name);
         }
 
-        System.out.println("\n----- Employees with Name: " + name + " -----");
-        list.forEach(System.out::println);
+        // 2nd lookup → Must hit cache (no SQL)
+        EntityManager em2 = entityManagerFactory.createEntityManager();
+        List<Employee> list2 = em2.createQuery(
+                        "SELECT e FROM Employee e WHERE e.employee_name = :name", Employee.class)
+                .setParameter("name", name)
+                .setHint("org.hibernate.cacheable", true)
+                .getResultList();
+        em2.close();
+
+        System.out.println("\n---- Employees ----");
+        list2.forEach(System.out::println);
     }
     private void viewEmployeeByEmail() {
         System.out.print("Enter Employee Email: ");
         String email = scanner.next();
 
         EntityManager em = entityManagerFactory.createEntityManager();
-
-        List<Employee> result = em.createQuery(
+        List<Employee> result1 = em.createQuery(
                         "SELECT e FROM Employee e WHERE e.employee_email = :email", Employee.class)
                 .setParameter("email", email)
+                .setHint("org.hibernate.cacheable", true)
                 .getResultList();
-
         em.close();
 
-        if (result.isEmpty()) {
+        if (result1.isEmpty()) {
             throw new EmployeeNotFoundException("No Employee found with Email: " + email);
         }
 
+        EntityManager em2 = entityManagerFactory.createEntityManager();
+        List<Employee> result2 = em2.createQuery(
+                        "SELECT e FROM Employee e WHERE e.employee_email = :email", Employee.class)
+                .setParameter("email", email)
+                .setHint("org.hibernate.cacheable", true)
+                .getResultList();
+        em2.close();
+
         System.out.println("\n---- Employee Details ----");
-        System.out.println(result.get(0));
+        System.out.println(result2.get(0));
     }
+
+
 
     private void viewEmployeeByPhone() {
         System.out.print("Enter Employee Phone Number: ");
         String phone = scanner.next();
 
         EntityManager em = entityManagerFactory.createEntityManager();
-
-        List<Employee> result = em.createQuery(
+        List<Employee> result1 = em.createQuery(
                         "SELECT e FROM Employee e WHERE e.employee_phonenumber = :phone", Employee.class)
                 .setParameter("phone", phone)
+                .setHint("org.hibernate.cacheable", true)
                 .getResultList();
-
         em.close();
 
-        if (result.isEmpty()) {
+        if (result1.isEmpty()) {
             throw new EmployeeNotFoundException("No Employee found with Phone Number: " + phone);
         }
 
+        EntityManager em2 = entityManagerFactory.createEntityManager();
+        List<Employee> result2 = em2.createQuery(
+                        "SELECT e FROM Employee e WHERE e.employee_phonenumber = :phone", Employee.class)
+                .setParameter("phone", phone)
+                .setHint("org.hibernate.cacheable", true)
+                .getResultList();
+        em2.close();
+
         System.out.println("\n---- Employee Details ----");
-        System.out.println(result.get(0));
+        System.out.println(result2.get(0));
     }
+
+
 
     private void viewAllEmployees() {
         EntityManager em = entityManagerFactory.createEntityManager();
 
-        List<Employee> list = em.createQuery("SELECT e FROM Employee e", Employee.class).getResultList();
+        List<Employee> list = em.createQuery("SELECT e FROM Employee e", Employee.class)
+                .setHint("jakarta.persistence.cache.storeMode", "USE")
+                .setHint("jakarta.persistence.cache.retrieveMode", "USE")
+                .setHint("org.hibernate.cacheable", true)  // Important for query cache
+                .getResultList();
+        em.close();
 
-        if (list.isEmpty())
+        if (list.isEmpty()) {
             throw new EmployeeNotFoundException("No Employees exist in the database!");
+        }
 
         System.out.println("\n---- All Employees ----");
         list.forEach(System.out::println);
-
-        em.close();
     }
-
     private void updateEmployee() {
         System.out.print("Enter Employee ID: ");
         int id = scanner.nextInt();

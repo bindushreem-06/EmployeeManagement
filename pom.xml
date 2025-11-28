@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.example</groupId>
-    <artifactId>HibernateJPA</artifactId>
+    <artifactId>EmployeeManagementHibernateWithJPA</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>HibernateJPA</name>
+    <name>EmployeeManagementHibernateWithJPA</name>
     <url>http://maven.apache.org</url>
 
     <properties>
@@ -22,7 +22,6 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/com.mysql/mysql-connector-j -->
         <dependency>
             <groupId>com.mysql</groupId>
             <artifactId>mysql-connector-j</artifactId>
@@ -62,6 +61,7 @@
             <artifactId>ehcache</artifactId>
             <version>3.1.0</version>
         </dependency>
+
 
     </dependencies>
     <build>
